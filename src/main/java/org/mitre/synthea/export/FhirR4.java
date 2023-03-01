@@ -924,7 +924,7 @@ public class FhirR4 {
       if (entry.getResource().fhirType().equals("Practitioner")) {
         Practitioner doc = (Practitioner) entry.getResource();
         if (doc.getIdentifierFirstRep().getValue().equals(clinician.npi)) {
-          return entry.getFullUrl();
+          return entry.getId();
         }
       }
     }

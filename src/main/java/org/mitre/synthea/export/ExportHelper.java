@@ -283,8 +283,9 @@ public abstract class ExportHelper {
     if (clinician == null) {
       return null;
     } else {
-      return String.format("%s?identifier=%s|%s", "Practitioner",
-              "http://hl7.org/fhir/sid/us-npi", clinician.npi);
+/*      return String.format("%s?identifier=%s|%s", "Practitioner",
+              "http://hl7.org/fhir/sid/us-npi", clinician.npi); */
+      return String.format("%s/%s","Practitioner", clinician.uuid);
     }
   }
 
