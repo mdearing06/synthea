@@ -36,6 +36,11 @@ cd synthea
 ./gradlew build check test
 ```
 
+Following will build while skipping tests
+```
+./gradlew build -x test
+```
+
 ### Changing the default properties
 
 

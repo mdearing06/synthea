@@ -3074,14 +3074,10 @@ public class FhirR4 {
               .setLastUpdated(Date.from(Instant.now()));
       practitionerRole.setMeta(meta);
       practitionerRole.setPractitioner(new Reference()
-          .setIdentifier(new Identifier()
-                  .setSystem("http://hl7.org/fhir/sid/us-npi")
-                  .setValue(clinician.npi))
+          .setReference(ExportHelper.buildFhirNpiSearchUrl(clinician))
           .setDisplay(practitionerResource.getNameFirstRep().getNameAsSingleString()));
       practitionerRole.setOrganization(new Reference()
-          .setIdentifier(new Identifier()
-                  .setSystem(SYNTHEA_IDENTIFIER)
-                  .setValue(clinician.getOrganization().getResourceID()))
+          .setReference(ExportHelper.buildFhirSearchUrlId("Organization", clinician.getOrganization().getResourceID()))
           .setDisplay(clinician.getOrganization().name));
       practitionerRole.addCode(
           mapCodeToCodeableConcept(

@@ -274,6 +274,10 @@ public abstract class ExportHelper {
             "https://github.com/synthetichealth/synthea", identifier);
   }
 
+  public static String buildFhirSearchUrlId(String resourceType, String id) {
+    return String.format("%s/%s", resourceType, id);
+  }
+
   /**
    * Build a FHIR search URL for a clinician using the clinician's NPI identifier.
    * @param clinician the Synthea clinician instance
