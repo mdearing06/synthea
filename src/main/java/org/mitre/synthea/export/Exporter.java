@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -70,6 +71,7 @@ public abstract class Exporter {
         !Config.get("generate.terminology_service_url", "").isEmpty();
     private BlockingQueue<String> recordQueue;
     private SupportedFhirVersion fhirVersion;
+    private Charset charset = Charset.forName(Config.get("exporter.encoding", "UTF-8"));
 
     public ExporterRuntimeOptions() {
       yearsOfHistory = Integer.parseInt(Config.get("exporter.years_of_history"));
@@ -197,7 +199,7 @@ public abstract class Exporter {
           String filename = entry.getResource().getResourceType().toString() + ".ndjson";
           Path outFilePath = outDirectory.toPath().resolve(filename);
           String entryJson = parser.encodeResourceToString(entry.getResource());
-          appendToFile(outFilePath, entryJson);
+          appendToFile(outFilePath, entryJson, options.charset);
         }
       } else {
         String bundleJson = FhirStu3.convertToFHIRJson(person, stopTime);
@@ -214,7 +216,7 @@ public abstract class Exporter {
           String filename = entry.getResource().getResourceName() + ".ndjson";
           Path outFilePath = outDirectory.toPath().resolve(filename);
           String entryJson = parser.encodeResourceToString(entry.getResource());
-          appendToFile(outFilePath, entryJson);
+          appendToFile(outFilePath, entryJson, options.charset);
         }
       } else {
         String bundleJson = FhirDstu2.convertToFHIRJson(person, stopTime);
@@ -231,7 +233,7 @@ public abstract class Exporter {
           String filename = entry.getResource().getResourceType().toString() + ".ndjson";
           Path outFilePath = outDirectory.toPath().resolve(filename);
           String entryJson = parser.encodeResourceToString(entry.getResource());
-          appendToFile(outFilePath, entryJson);
+          appendToFile(outFilePath, entryJson, options.charset);
         }
       } else {
         String bundleJson = FhirR4.convertToFHIRJson(person, stopTime);
@@ -368,7 +370,7 @@ public abstract class Exporter {
    * @param file Path to the new file.
    * @param contents The contents of the file.
    */
-  static void appendToFile(Path file, String contents) {
+  static void appendToFile(Path file, String contents, Charset charset) {
     PrintWriter writer = fileWriters.get(file);
 
     if (writer == null) {
@@ -377,7 +379,7 @@ public abstract class Exporter {
         if (writer == null) {
           try {
             writer = new PrintWriter(
-              new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.toFile(), true), StandardCharsets.UTF_8), FILE_BUFFER_SIZE)
+              new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.toFile(), true), charset), FILE_BUFFER_SIZE)
             );
           } catch (IOException e) {
             e.printStackTrace();

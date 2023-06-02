@@ -11,6 +11,7 @@ import ca.uhn.fhir.parser.IParser;
 import com.google.common.collect.Table;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.mitre.synthea.world.agents.Provider;
 
 public abstract class FhirPractitionerExporterDstu2 {
 
+  private static Charset charset = Charset.forName(Config.get("exporter.encoding", "UTF-8"));
   private static final String EXTENSION_URI =
       "http://synthetichealth.github.io/synthea/utilization-encounters-extension";
 
@@ -68,7 +70,7 @@ public abstract class FhirPractitionerExporterDstu2 {
         Path outFilePath = outputFolder.toPath().resolve("Practitioner." + stop + ".ndjson");
         for (Bundle.Entry entry : bundle.getEntry()) {
           String entryJson = parser.encodeResourceToString(entry.getResource());
-          Exporter.appendToFile(outFilePath, entryJson);
+          Exporter.appendToFile(outFilePath, entryJson, charset);
         }
       } else {
         parser = parser.setPrettyPrint(true);

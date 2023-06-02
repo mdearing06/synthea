@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -3606,6 +3607,7 @@ public class BB2RIFExporter {
     private String bbFieldSeparator = "|";
     private final Path path;
     private final Class<E> clazz;
+    private Charset charset = Charset.forName(Config.get("exporter.encoding", "UTF-8"));
 
     /**
      * Construct a new instance. Fields will be separated using the default '|' character.
@@ -3651,7 +3653,7 @@ public class BB2RIFExporter {
      */
     private void writeLine(String... fields) {
       String line = String.join(bbFieldSeparator, fields);
-      Exporter.appendToFile(path, line);
+      Exporter.appendToFile(path, line, charset);
     }
 
     /**
