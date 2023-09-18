@@ -5,6 +5,7 @@ import ca.uhn.fhir.parser.IParser;
 import com.google.common.collect.Table;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,6 +22,7 @@ import org.mitre.synthea.world.agents.Provider;
 
 public abstract class HospitalExporterR4 {
 
+  private static Charset charset = Charset.forName(Config.get("exporter.encoding", "UTF-8"));
   private static final String SYNTHEA_URI = "http://synthetichealth.github.io/synthea/";
 
   /**
@@ -58,9 +60,9 @@ public abstract class HospitalExporterR4 {
         for (BundleEntryComponent entry : bundle.getEntry()) {
           String entryJson = parser.encodeResourceToString(entry.getResource());
           if (entry.getResource().getResourceType() == ResourceType.Organization) {
-            Exporter.appendToFile(orgFilePath, entryJson);
+            Exporter.appendToFile(orgFilePath, entryJson, charset);
           } else {
-            Exporter.appendToFile(locFilePath, entryJson);
+            Exporter.appendToFile(locFilePath, entryJson, charset);
           }
         }
       } else {
